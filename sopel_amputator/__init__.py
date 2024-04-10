@@ -12,6 +12,7 @@ from sopel import plugin, tools
 
 
 LOGGER = tools.get_logger('amputator')
+USER_AGENT = 'sopel-amputator (https://github.com/dgw/sopel-amputator)'
 AMPUTATOR_CONVERT_API = 'https://www.amputatorbot.com/api/v1/convert'
 # Substrings borrowed from AmputatorBot:
 # https://github.com/KilledMufasa/AmputatorBot/blob/263ff4b3b9c5220f6d0dc3479d8640dca7aafe15/static/static.txt#L8-L9
@@ -39,7 +40,9 @@ def amputate(bot, trigger):
     # and AmputatorBot API doesn't handle that (April 2024)
     r = requests.get(
         AMPUTATOR_CONVERT_API,
-        params='&'.join("%s=%s" % (k,v) for k,v in params.items()))
+        params='&'.join("%s=%s" % (k,v) for k,v in params.items()),
+        headers={'User-Agent': USER_AGENT}
+    )
 
     try:
         r.raise_for_status()
