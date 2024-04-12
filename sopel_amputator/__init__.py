@@ -53,13 +53,15 @@ def amputate(bot, trigger):
 
     hostname = urlparse(suspected_amp_link).hostname
     ignored = bot.settings.amputator.ignore_domains
-    is_ignored_domain = any((hostname == name for name in ignored))
-    is_ignored_subdomain = any((hostname.endswith('.' + name) for name in ignored))
+    is_ignored_subdomain = \
+        any((hostname.endswith('.' + name) for name in ignored))
+    is_ignored_domain = \
+        is_ignored_subdomain or any((hostname == name for name in ignored))
 
-    if is_ignored_domain or is_ignored_subdomain:
+    if is_ignored_domain:
         LOGGER.info(
             "%s %r matches ignore list; skipping",
-            'Domain' if is_ignored_domain else 'Subdomain',
+            'Subdomain' if is_ignored_subdomain else 'Domain',
             hostname,
         )
         return plugin.NOLIMIT
