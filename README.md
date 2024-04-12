@@ -1,6 +1,7 @@
 # sopel-amputator
 
-Sopel plugin that detects AMP links and finds their canonical forms using AmputatorBot
+Sopel plugin that detects AMP links and finds their canonical forms using
+[AmputatorBot](https://www.amputatorbot.com/)
 
 ## Installing
 
@@ -15,3 +16,14 @@ $ pip install sopel-amputator
 The easiest way to configure `sopel-amputator` is via Sopel's
 configuration wizard—simply run `sopel-plugins configure amputator`
 and enter the values for which it prompts you.
+
+Individual settings are described below.
+
+### `ignore_domains`
+
+This is a list of hostnames which `sopel-amputator` will ignore, even if they
+match one of the common AMP substrings it looks for. By default it contains a
+set of ignored domains from the AmputatorBot project.
+
+The default list is _overridden_ when setting this value, so make sure to also
+enter any of the default entries you want to keep.
