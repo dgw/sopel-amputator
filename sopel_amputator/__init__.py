@@ -50,10 +50,18 @@ def amp_patterns(settings):
 @plugin.output_prefix('[AMPutator] ')
 def amputate(bot, trigger):
     suspected_amp_link = trim_url(trigger.group(0))
-    parts = urlparse(suspected_amp_link)
 
-    if any(map(parts.hostname.endswith, bot.settings.amputator.ignore_domains)):
-        LOGGER.info("Skipping link from ignored domain: %s", parts.hostname)
+    hostname = urlparse(suspected_amp_link).hostname
+    ignored = bot.settings.amputator.ignore_domains
+    is_ignored_domain = any((hostname == name for name in ignored))
+    is_ignored_subdomain = any((hostname.endswith('.' + name) for name in ignored))
+
+    if is_ignored_domain or is_ignored_subdomain:
+        LOGGER.info(
+            "%s %r matches ignore list; skipping",
+            'Domain' if is_ignored_domain else 'Subdomain',
+            hostname,
+        )
         return plugin.NOLIMIT
 
     params = {
