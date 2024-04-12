@@ -1,0 +1,14 @@
+## Changelog
+
+### 0.1.0
+
+Initial release.
+
+Pending conversion from `setup.py`+`setup.cfg` template to newer style package
+using `pyproject.toml`—plus some other features on the todo list—but the basics
+are here:
+
+* Detect likely AMP links
+* Call AmputatorBot API for the canonical URL of each suspected AMP link
+* Skip links from a configurable list of ignored domains
+* Silently fail if no better URL is found
