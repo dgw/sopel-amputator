@@ -72,21 +72,59 @@ def amputate(bot, trigger):
         'q': suspected_amp_link,
     }
 
-    # Using `params=` with a dict directly means requests will urlencode the query
-    # and AmputatorBot API doesn't handle that (April 2024)
-    r = requests.get(
-        AMPUTATOR_CONVERT_API,
-        params='&'.join("%s=%s" % (k,v) for k,v in params.items()),
-        headers={'User-Agent': USER_AGENT}
-    )
+    try:
+        # Using `params=` with a dict directly means requests will urlencode the query
+        # and AmputatorBot API doesn't handle that (April 2024)
+        r = requests.get(
+            AMPUTATOR_CONVERT_API,
+            params='&'.join("%s=%s" % (k,v) for k,v in params.items()),
+            headers={'User-Agent': USER_AGENT},
+            timeout=(3.0, 10.0),
+        )
+    except requests.exceptions.ConnectTimeout:
+        LOGGER.info('Connection to AmputatorBot API timed out.')
+        return plugin.NOLIMIT
+    except requests.exceptions.ConnectionError:
+        LOGGER.info("Couldn't connect to AmputatorBot API server.")
+        return plugin.NOLIMIT
+    except requests.exceptions.ReadTimeout:
+        LOGGER.info('AmputatorBot API took too long to send data.')
+        return plugin.NOLIMIT
+
+    data = None
+    try:
+        data = r.json()
+    except ValueError:
+        LOGGER.info('AmputatorBot API returned invalid JSON; aborting.')
+        LOGGER.debug('Invalid response data:\n%r', r.content)
+        return plugin.NOLIMIT
 
     try:
         r.raise_for_status()
-    except Exception:
+    except requests.exceptions.HTTPError as http_error:
+        if data is not None:
+            LOGGER.info(
+                '%s (%s)',
+                data.get('error_message', 'Unknown error'),
+                data.get('result_code', '(unknown error type)'),
+            )
+        else:
+            LOGGER.info(
+                'AmputatorBot API returned an HTTP error: %s.',
+                http_error,
+            )
         LOGGER.info(
-            'AmputatorBot API returned an error; ignoring suspected AMP link %r' % suspected_amp_link)
+            'Ignoring suspected AMP link %r due to API error.',
+            suspected_amp_link,
+        )
         return plugin.NOLIMIT
 
-    data = r.json()[0]
+    # non-error status should be a JSON list of one
+    data = data[0]
     if data['canonical']:
         bot.say("{}'s canonical link: {}".format(trigger.nick, data['canonical']['url']))
+    else:
+        LOGGER.info(
+            'No better link found; ignoring suspected AMP URL %r.',
+            suspected_amp_link,
+        )
