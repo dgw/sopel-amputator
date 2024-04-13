@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.2.0
+
+Under-the-hood improvements:
+
+* More robust domain matching against ignore list
+  * Includes distinct log messages for exact matches vs. subdomain matches
+* More granular error handling
+* Better error logging
+* Migrated package metadata from `setup.py`+`setup.cfg` to `pyproject.toml`
+
+
 ### 0.1.0
 
 Initial release.
