@@ -2,7 +2,7 @@
 
 Sopel plugin that detects AMP links and finds their canonical forms using AmputatorBot
 """
-from __future__ import generator_stop
+from __future__ import annotations
 
 import re
 from urllib.parse import urlparse
