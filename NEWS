@@ -1,5 +1,10 @@
 ## Changelog
 
+### 0.2.1
+
+* Added Twitter/X domains to default ignore list
+
+
 ### 0.2.0
 
 Under-the-hood improvements:

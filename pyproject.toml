@@ -14,7 +14,7 @@ readme = { file=["README.md", "NEWS"], content-type="text/markdown" }
 
 [project]
 name = "sopel-amputator"
-version = "0.2.0"
+version = "0.2.1"
 description = "Sopel plugin that detects AMP links and finds their canonical forms using AmputatorBot"
 
 authors = [
