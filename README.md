@@ -25,5 +25,5 @@ This is a list of hostnames which `sopel-amputator` will ignore, even if they
 match one of the common AMP substrings it looks for. By default it contains a
 set of ignored domains from the AmputatorBot project.
 
-The default list is _overridden_ when setting this value, so make sure to also
-enter any of the default entries you want to keep.
+Setting this value _overrides_ the default, so make sure to also enter any
+entries that you would like to keep from the default list.

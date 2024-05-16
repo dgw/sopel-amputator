@@ -21,7 +21,14 @@ AMPUTATOR_CONVERT_API = 'https://www.amputatorbot.com/api/v1/convert'
 # https://github.com/KilledMufasa/AmputatorBot/blob/263ff4b3b9c5220f6d0dc3479d8640dca7aafe15/static/static.txt#L8-L9
 AMP_KEYWORDS = ["/amp", "amp/", ".amp", "amp.", "?amp", "amp?", "=amp",
                 "amp=", "&amp", "amp&", "%%amp", "amp%", "_amp", "amp_"]
-IGNORE_DOMAINS = ["bandcamp.com", "progonlymusic.com", "spotify.com", "youtube.com"]
+IGNORE_DOMAINS = [
+    "bandcamp.com",
+    "progonlymusic.com",
+    "spotify.com",
+    "twitter.com",
+    "x.com",
+    "youtube.com",
+]
 
 
 class AmputatorSection(StaticSection):
