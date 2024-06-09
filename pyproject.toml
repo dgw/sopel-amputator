@@ -40,7 +40,7 @@ keywords = [
 
 requires-python = ">=3.8, <4"
 dependencies = [
-    "sopel>=8.0.0.dev0",
+    "sopel>=8.0",
 ]
 
 [project.urls]
