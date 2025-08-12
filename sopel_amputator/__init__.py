@@ -5,6 +5,7 @@ Sopel plugin that detects AMP links and finds their canonical forms using Amputa
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
@@ -12,6 +13,11 @@ import requests
 from sopel import plugin, tools
 from sopel.config.types import ListAttribute, StaticSection
 from sopel.tools.web import trim_url
+
+
+if TYPE_CHECKING:
+    from sopel.bot import SopelWrapper
+    from sopel.trigger import Trigger
 
 
 LOGGER = tools.get_logger('amputator')
@@ -55,11 +61,11 @@ def amp_patterns(settings):
 
 @plugin.url_lazy(amp_patterns)
 @plugin.output_prefix('[AMPutator] ')
-def amputate(bot, trigger):
+def amputate(bot: SopelWrapper, trigger: Trigger):
     suspected_amp_link = trim_url(trigger.group(0))
 
     hostname = urlparse(suspected_amp_link).hostname
-    ignored = bot.settings.amputator.ignore_domains
+    ignored = bot.settings.amputator.ignore_domains or []
     is_ignored_subdomain = \
         any((hostname.endswith('.' + name) for name in ignored))
     is_ignored_domain = \
