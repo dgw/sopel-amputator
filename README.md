@@ -35,3 +35,8 @@ to guess canonical URLs when the page doesn't provide one in its HTML.
 
 Behavior can be changed per-channel by chanops and bot admins using the
 `.ampguess` command on IRC.
+
+### `skip_safe_filetypes`
+
+Whether to skip AMP-checking links that look like they point to safe MIME types,
+e.g. media files.
