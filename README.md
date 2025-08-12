@@ -13,9 +13,9 @@ $ pip install sopel-amputator
 
 ## Configuring
 
-The easiest way to configure `sopel-amputator` is via Sopel's
-configuration wizard—simply run `sopel-plugins configure amputator`
-and enter the values for which it prompts you.
+The easiest way to configure `sopel-amputator` is via Sopel's configuration
+wizard—simply run `sopel-plugins configure amputator` and enter the values for
+which it prompts you.
 
 Individual settings are described below.
 
@@ -27,3 +27,11 @@ set of ignored domains from the AmputatorBot project.
 
 Setting this value _overrides_ the default, so make sure to also enter any
 entries that you would like to keep from the default list.
+
+### `guess_and_check`
+
+The default behavior for AMPutatorBot's "guess and check" feature, which tries
+to guess canonical URLs when the page doesn't provide one in its HTML.
+
+Behavior can be changed per-channel by chanops and bot admins using the
+`.ampguess` command on IRC.
