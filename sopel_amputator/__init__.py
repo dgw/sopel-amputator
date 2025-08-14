@@ -5,13 +5,19 @@ Sopel plugin that detects AMP links and finds their canonical forms using Amputa
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
 
 from sopel import plugin, tools
-from sopel.config.types import ListAttribute, StaticSection
+from sopel.config.types import BooleanAttribute, ListAttribute, StaticSection
 from sopel.tools.web import trim_url
+
+
+if TYPE_CHECKING:
+    from sopel.bot import SopelWrapper
+    from sopel.trigger import Trigger
 
 
 LOGGER = tools.get_logger('amputator')
@@ -33,6 +39,14 @@ IGNORE_DOMAINS = [
 
 class AmputatorSection(StaticSection):
     ignore_domains = ListAttribute('ignore_domains', default=IGNORE_DOMAINS)
+    """Domains to ignore when checking for AMP links."""
+
+    guess_and_check = BooleanAttribute('guess_and_check', default=True)
+    """Whether to have AMPutatorBot guess the canonical link by default.
+
+    This can be overridden on a per-channel basis by ops and bot admins via the
+    "ampguess" command.
+    """
 
 
 def setup(bot):
@@ -55,11 +69,11 @@ def amp_patterns(settings):
 
 @plugin.url_lazy(amp_patterns)
 @plugin.output_prefix('[AMPutator] ')
-def amputate(bot, trigger):
+def amputate(bot: SopelWrapper, trigger: Trigger):
     suspected_amp_link = trim_url(trigger.group(0))
 
     hostname = urlparse(suspected_amp_link).hostname
-    ignored = bot.settings.amputator.ignore_domains
+    ignored = bot.settings.amputator.ignore_domains or []
     is_ignored_subdomain = \
         any((hostname.endswith('.' + name) for name in ignored))
     is_ignored_domain = \
@@ -73,8 +87,13 @@ def amputate(bot, trigger):
         )
         return plugin.NOLIMIT
 
+    guess_and_check = bot.db.get_channel_value(
+        trigger.sender,
+        'amputator_ampguess',
+        bot.settings.amputator.guess_and_check,
+    )
     params = {
-        'gac': 'true',
+        'gac': 'true' if guess_and_check else 'false',
         'md': 3,
         'q': suspected_amp_link,
     }
@@ -135,3 +154,26 @@ def amputate(bot, trigger):
             'No better link found; ignoring suspected AMP URL %r.',
             suspected_amp_link,
         )
+
+
+@plugin.command('ampguess')
+@plugin.require_chanmsg
+def ampguess(bot: SopelWrapper, trigger: Trigger):
+    """Enable or disable AMP guess-and-check for this channel."""
+    arg = trigger.group(3)
+    channel = trigger.sender
+
+    is_op = bot.channels[channel].privileges.get(trigger.nick, 0) >= plugin.OP
+    if not (is_op or trigger.admin):
+        bot.reply("Only channel operators or bot admins can use this command.")
+        return
+
+    if not arg or arg.lower() not in ('on', 'off'):
+        bot.reply(f"Usage: {bot.settings.core.help_prefix}ampguess on|off")
+        return
+
+    enabled = arg.lower() == 'on'
+    bot.db.set_channel_value(channel, 'amputator_ampguess', enabled)
+    bot.say("AMP guess-and-check is now {} for {}.".format(
+        "enabled" if enabled else "disabled", channel
+    ))
