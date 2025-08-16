@@ -4,6 +4,7 @@ Sopel plugin that detects AMP links and finds their canonical forms using Amputa
 """
 from __future__ import annotations
 
+import mimetypes
 import re
 from typing import TYPE_CHECKING
 from urllib.parse import urlparse
@@ -48,6 +49,14 @@ class AmputatorSection(StaticSection):
     "ampguess" command.
     """
 
+    skip_safe_filetypes = BooleanAttribute('skip_safe_filetypes', default=True)
+    """Whether to skip links with safe MIME types, like media files.
+
+    This works by guessing the MIME type of the URL, not by actually fetching
+    the link target, so it won't be foolproof.
+    """
+
+
 
 def setup(bot):
     bot.config.define_section('amputator', AmputatorSection)
@@ -86,6 +95,17 @@ def amputate(bot: SopelWrapper, trigger: Trigger):
             hostname,
         )
         return plugin.NOLIMIT
+
+    if bot.settings.amputator.skip_safe_filetypes:
+        # Check if the URL ends with a "safe" extension (e.g. audio, image,
+        # video) and skip it if so.
+        mime, _ = mimetypes.guess_type(suspected_amp_link)
+        if mime and mime.startswith(('audio/', 'image/', 'video/')):
+            LOGGER.info(
+                'Skipping suspected AMP link %r with guessed safe type %r.',
+                suspected_amp_link, mime,
+            )
+            return plugin.NOLIMIT
 
     guess_and_check = bot.db.get_channel_value(
         trigger.sender,
