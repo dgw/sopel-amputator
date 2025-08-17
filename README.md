@@ -19,7 +19,7 @@ which it prompts you.
 
 Individual settings are described below.
 
-### `ignore_domains`
+### `ignore_domains` (`list[str]`)
 
 This is a list of hostnames which `sopel-amputator` will ignore, even if they
 match one of the common AMP substrings it looks for. By default it contains a
@@ -28,7 +28,7 @@ set of ignored domains from the AmputatorBot project.
 Setting this value _overrides_ the default, so make sure to also enter any
 entries that you would like to keep from the default list.
 
-### `guess_and_check`
+### `guess_and_check` (`bool`, default `true`)
 
 The default behavior for AMPutatorBot's "guess and check" feature, which tries
 to guess canonical URLs when the page doesn't provide one in its HTML.
@@ -36,7 +36,7 @@ to guess canonical URLs when the page doesn't provide one in its HTML.
 Behavior can be changed per-channel by chanops and bot admins using the
 `.ampguess` command on IRC.
 
-### `skip_safe_filetypes`
+### `skip_safe_filetypes` (`bool`, default `true`)
 
 Whether to skip AMP-checking links that look like they point to safe MIME types,
 e.g. media files.

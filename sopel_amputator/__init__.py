@@ -66,7 +66,16 @@ def configure(config):
     config.define_section('amputator', AmputatorSection)
     config.amputator.configure_setting(
         'ignore_domains',
-        "Enter any domains you want the plugin to ignore (see README):",
+        "Enter any domains you want the plugin to ignore, "
+        "one per line (see README):\n",
+    )
+    config.amputator.configure_setting(
+        'guess_and_check',
+        "Enable guess-and-check for AMP links by default?",
+    )
+    config.amputator.configure_setting(
+        'skip_safe_filetypes',
+        'Skip links with extensions that look like images/video/audio?',
     )
 
 
