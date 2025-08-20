@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.3.0
+
+* Guess MIME type of links (by file extension, if present) and skip "safe" types
+  that are probably not wrapped in AMP [#3]
+  * Configurable with `skip_safe_filetypes` config setting.
+* Added configuration for AMPutatorBot's "guess and check" function, both a
+  global setting (`guess_and_check`) and a per-channel override (new `ampguess`
+  command for chanops and bot admins) [#2]
+
+Under the hood:
+* Require _stable_ Sopel 8.x, no more pre-releases
+* Updated package metadata & release workflow
+
+
 ### 0.2.1
 
 * Added Twitter/X domains to default ignore list
